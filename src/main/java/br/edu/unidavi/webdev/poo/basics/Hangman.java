@@ -5,37 +5,26 @@ import java.util.Scanner;
 public class Hangman {
 	
 	public static void main(String[] args) {
-		//
-		String pass = "Ghost";
-		char[] placeholder = new char[pass.length()];
-		for (int i = 0; i < pass.length(); i++)
-			placeholder[i] = '*';
-		boolean canPlay = true;
-		int wrongs = 0;
-		int limit = 6;
-		boolean gotcha = false;
+		init();
+	}
+	
+	public static void init(){
+		Passe passe = new Passe("Ghost");
+		char[] placeholder = passe.initPlaceholder();
+		Jogo jogo = new Jogo(passe);
+		
+		
 		Scanner scanner = new Scanner(System.in);
 		do {
-			System.out.printf("Your attempt: %d/%d", wrongs, limit);
+			System.out.printf("Your attempt: %d/%d", jogo.getWrongs(), jogo.getLimit());
 			String attempt = scanner.nextLine();
-			boolean hit = false;
-			gotcha = true;
-			String placeholderAsString = "";
-			for (int i = 0; i < pass.length(); i++) {
-				if (pass.charAt(i) == attempt.charAt(0)) {
-					placeholder[i] = attempt.charAt(0);
-					hit = true;
-				}
-				gotcha = gotcha & (pass.charAt(i) == placeholder[i]);
-				placeholderAsString += placeholder[i];
-			}
-			if (!hit)
-				wrongs++;
-			canPlay = wrongs < limit && !gotcha;
-			System.out.println(placeholderAsString);
-		} while (canPlay);
+			
+			jogo.jogada(placeholder, attempt);
+			
+			System.out.println(jogo.getPlaceholderAsString());
+		} while (jogo.isCanPlay());
 		scanner.close();
-		System.out.println("You ".concat(gotcha ? " win" : " lose"));
+		System.out.println("You ".concat(jogo.isGotcha() ? " win" : " lose"));
 
 	}
 }
